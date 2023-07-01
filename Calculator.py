@@ -1,5 +1,6 @@
 import tkinter as tk
 
+# Font styles and color constants
 LARGE_FONT_STYLE = ("Arial", 40, "bold")
 SMALL_FONT_STYLE = ("Arial", 16)
 DIGITS_FONT_STYLE = ("Arial", 24, "bold")
@@ -44,20 +45,26 @@ class Calculator:
         self.bind_keys()
 
     def bind_keys(self):
+        # Bind Enter key to evaluate
         self.window.bind("<Return>", lambda event: self.evaluate())
+
+        # Bind digit keys to add corresponding digits to the expression
         for key in self.digits:
             self.window.bind(str(key), lambda event, digit=key: self.add_to_expression(digit))
 
+        # Bind operator keys to append corresponding operators to the expression
         for key in self.operations:
             self.window.bind(key, lambda event, operator=key: self.append_operator(operator))
 
     def create_special_buttons(self):
+        # Create special buttons: Clear, Equals, Square, Square Root
         self.create_clear_button()
         self.create_equals_button()
         self.create_square_button()
         self.create_sqrt_button()
 
     def create_display_labels(self):
+        # Create and pack the labels for total and current expressions
         total_label = tk.Label(self.display_frame, text=self.total_expression, anchor=tk.E, bg=LIGHT_GRAY,
                                fg=LABEL_COLOR, padx=24, font=SMALL_FONT_STYLE)
         total_label.pack(expand=True, fill='both')
@@ -69,21 +76,25 @@ class Calculator:
         return total_label, label
 
     def create_display_frame(self):
+        # Create the display frame
         frame = tk.Frame(self.window, height=221, bg=LIGHT_GRAY)
         frame.pack(expand=True, fill="both")
         return frame
 
     def add_to_expression(self, value):
+        # Add the digit value to the current expression
         self.current_expression += str(value)
         self.update_label()
 
     def create_digit_buttons(self):
+        # Create digit buttons and place them in the grid
         for digit, grid_value in self.digits.items():
             button = tk.Button(self.buttons_frame, text=str(digit), bg=WHITE, fg=LABEL_COLOR, font=DIGITS_FONT_STYLE,
                                borderwidth=0, command=lambda x=digit: self.add_to_expression(x))
             button.grid(row=grid_value[0], column=grid_value[1], sticky=tk.NSEW)
 
     def append_operator(self, operator):
+        # Append the operator to the current expression and update the total expression
         self.current_expression += operator
         self.total_expression += self.current_expression
         self.current_expression = ""
@@ -91,6 +102,7 @@ class Calculator:
         self.update_label()
 
     def create_operator_buttons(self):
+        # Create operator buttons (+, -, *, /) and place them in the grid
         i = 0
         for operator, symbol in self.operations.items():
             button = tk.Button(self.buttons_frame, text=symbol, bg=OFF_WHITE, fg=LABEL_COLOR, font=DEFAULT_FONT_STYLE,
@@ -99,35 +111,42 @@ class Calculator:
             i += 1
 
     def clear(self):
+        # Clear the current and total expressions
         self.current_expression = ""
         self.total_expression = ""
         self.update_label()
         self.update_total_label()
 
     def create_clear_button(self):
+        # Create the Clear button (C)
         button = tk.Button(self.buttons_frame, text="C", bg=OFF_WHITE, fg=LABEL_COLOR, font=DEFAULT_FONT_STYLE,
                            borderwidth=0, command=self.clear)
         button.grid(row=0, column=1, sticky=tk.NSEW)
 
     def square(self):
+        # Compute the square of the current expression
         self.current_expression = str(eval(f"{self.current_expression}**2"))
         self.update_label()
 
     def create_square_button(self):
+        # Create the Square button (x²)
         button = tk.Button(self.buttons_frame, text="x\u00b2", bg=OFF_WHITE, fg=LABEL_COLOR, font=DEFAULT_FONT_STYLE,
                            borderwidth=0, command=self.square)
         button.grid(row=0, column=2, sticky=tk.NSEW)
 
     def sqrt(self):
+        # Compute the square root of the current expression
         self.current_expression = str(eval(f"{self.current_expression}**0.5"))
         self.update_label()
 
     def create_sqrt_button(self):
+        # Create the Square Root button (√x)
         button = tk.Button(self.buttons_frame, text="\u221ax", bg=OFF_WHITE, fg=LABEL_COLOR, font=DEFAULT_FONT_STYLE,
                            borderwidth=0, command=self.sqrt)
         button.grid(row=0, column=3, sticky=tk.NSEW)
 
     def evaluate(self):
+        # Evaluate the total expression and update the current expression
         self.total_expression += self.current_expression
         self.update_total_label()
         try:
@@ -139,25 +158,30 @@ class Calculator:
             self.update_label()
 
     def create_equals_button(self):
+        # Create the Equals button (=)
         button = tk.Button(self.buttons_frame, text="=", bg=LIGHT_BLUE, fg=LABEL_COLOR, font=DEFAULT_FONT_STYLE,
                            borderwidth=0, command=self.evaluate)
         button.grid(row=4, column=3, columnspan=2, sticky=tk.NSEW)
 
     def create_buttons_frame(self):
+        # Create the frame for buttons
         frame = tk.Frame(self.window)
         frame.pack(expand=True, fill="both")
         return frame
 
     def update_total_label(self):
+        # Update the total label with the formatted total expression
         expression = self.total_expression
         for operator, symbol in self.operations.items():
             expression = expression.replace(operator, f' {symbol} ')
         self.total_label.config(text=expression)
 
     def update_label(self):
+        # Update the current expression label
         self.label.config(text=self.current_expression[:11])
 
     def run(self):
+        # Run the calculator application
         self.window.mainloop()
 
 
